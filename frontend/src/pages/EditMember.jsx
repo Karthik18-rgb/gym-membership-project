@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import MemberForm from '../components/MemberForm';
 import Loader from '../components/Loader';
 import { getMemberById, updateMember } from '../services/MemberService';
-import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const EditMember = () => {
   const { id } = useParams();
@@ -12,7 +11,6 @@ const EditMember = () => {
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  useDocumentTitle('Edit Member');
 
   useEffect(() => {
     const loadMember = async () => {

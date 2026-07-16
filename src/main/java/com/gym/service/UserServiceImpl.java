@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -23,8 +24,10 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder,
+                           JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -34,24 +37,36 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+
+        System.out.println("===== LOGIN METHOD CALLED =====");
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException("Invalid email or password");
         }
 
         String token = jwtUtil.generateToken(user.getUsername());
-        String role = user.getRoles().stream().findFirst().map(Role::getName).orElse("ADMIN");
+        String role = user.getRoles()
+                .stream()
+                .findFirst()
+                .map(Role::getName)
+                .orElse("ADMIN");
+
         return new AuthResponse(token, user.getUsername(), role);
     }
 
     @Override
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+
+        System.out.println("===== REGISTER METHOD CALLED =====");
+
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
@@ -63,9 +78,18 @@ public class UserServiceImpl implements UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(Set.of(adminRole));
 
-        userRepository.save(user);
+        Set<Role> mutableRoles = new HashSet<>();
+        mutableRoles.add(adminRole);
+        user.setRoles(mutableRoles);
+
+        // DO NOT modify the inverse side (adminRole.getUsers().add(user))
+        // User.roles is the owning side; modifying Role.users during persist
+        // causes Hibernate flush deadlocks.
+
+        User savedUser = userRepository.save(user);
+        System.out.println("[TRACE] User saved with id=" + savedUser.getId());
+
         String token = jwtUtil.generateToken(user.getUsername());
         return new AuthResponse(token, user.getUsername(), "ADMIN");
     }

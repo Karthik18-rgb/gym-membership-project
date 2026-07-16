@@ -1,19 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { FiBarChart2, FiGrid, FiPlusCircle, FiSettings, FiUsers } from 'react-icons/fi';
 
 const links = [
   { to: '/', icon: FiGrid, label: 'Dashboard' },
   { to: '/members', icon: FiUsers, label: 'Members' },
   { to: '/members/add', icon: FiPlusCircle, label: 'Add Member' },
-  { to: '#reports', icon: FiBarChart2, label: 'Reports' },
-  { to: '#settings', icon: FiSettings, label: 'Settings' },
 ];
 
 const Sidebar = ({ isOpen, onClose }) => (
   <>
     <div className={`sidebar-backdrop ${isOpen ? 'show' : ''}`} onClick={onClose} />
-    <motion.aside initial={false} animate={{ x: isOpen ? 0 : 0 }} className={`app-sidebar ${isOpen ? 'show' : ''}`}>
+    <aside className={`app-sidebar ${isOpen ? 'show' : ''}`}>
       <div className="sidebar-welcome">
         <span>WORKSPACE</span>
         <strong>Gym Management</strong>
@@ -32,7 +29,7 @@ const Sidebar = ({ isOpen, onClose }) => (
         <span className="help-icon">?</span>
         <div><strong>Need help?</strong><small>Contact support</small></div>
       </div>
-    </motion.aside>
+    </aside>
   </>
 );
 

@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Loader from '../components/Loader';
 import { getMemberById } from '../services/MemberService';
-import useDocumentTitle from '../hooks/useDocumentTitle';
+import Loader from '../components/Loader';
 
 const ViewMember = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [member, setMember] = useState(null);
-  useDocumentTitle('View Member');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadMember = async () => {
@@ -17,50 +15,60 @@ const ViewMember = () => {
         setMember(await getMemberById(id));
       } catch (e) {
         toast.error(e.message);
-        navigate('/members');
+      } finally {
+        setLoading(false);
       }
     };
     loadMember();
-  }, [id, navigate]);
+  }, [id]);
 
-  if (!member) return <Loader message="Loading member profile..." />;
-
-  const details = [
-    { icon: 'bi-telephone-fill', label: 'Phone Number', value: member.phoneNumber },
-    { icon: 'bi-envelope-fill', label: 'Email Address', value: member.email },
-    { icon: 'bi-geo-alt-fill', label: 'Address', value: member.address },
-    { icon: 'bi-calendar-check-fill', label: 'Join Date', value: member.joinDate },
-    { icon: 'bi-calendar-x-fill', label: 'Expiry Date', value: member.expiryDate },
-  ];
+  if (loading) return <Loader message="Loading member details..." />;
+  if (!member) return <div className="alert alert-danger">Member not found.</div>;
 
   return (
     <div className="page-container">
-      <button className="btn btn-link px-0 mb-3" onClick={() => navigate('/members')}><i className="bi bi-arrow-left me-2" />Back to members</button>
-      <section className="content-card member-profile">
-        <div className="profile-header">
-          <div className="profile-avatar">{member.name.charAt(0).toUpperCase()}</div>
-          <div>
-            <p className="eyebrow mb-1">MEMBER PROFILE</p>
-            <h1>{member.name}</h1>
-            <span className="member-badge">{member.membershipPlan} Plan</span>
-          </div>
-          <button className="btn btn-outline-primary ms-auto" onClick={() => navigate(`/members/edit/${id}`)}><i className="bi bi-pencil-square me-2" />Edit</button>
+      <div className="page-heading">
+        <div>
+          <p className="eyebrow">MEMBER PROFILE</p>
+          <h1>{member.name}</h1>
         </div>
-        <hr className="my-4" />
-        <div className="row g-4">
-          {details.map((item) => (
-            <div className="col-md-6" key={item.label}>
-              <div className="detail-item">
-                <i className={`bi ${item.icon}`} />
-                <div>
-                  <small>{item.label}</small>
-                  <p>{item.value}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div>
+          <Link to={`/members/edit/${member.id}`} className="btn btn-primary me-2">Edit</Link>
+          <Link to="/members" className="btn btn-outline-secondary">Back</Link>
         </div>
-      </section>
+      </div>
+      <div className="row g-4">
+        <div className="col-md-6">
+          <section className="content-card">
+            <h4 className="mb-3">Personal Information</h4>
+            <dl className="row mb-0">
+              <dt className="col-sm-4">Full Name</dt>
+              <dd className="col-sm-8">{member.name}</dd>
+              <dt className="col-sm-4">Email</dt>
+              <dd className="col-sm-8">{member.email}</dd>
+              <dt className="col-sm-4">Phone</dt>
+              <dd className="col-sm-8">{member.phoneNumber}</dd>
+              <dt className="col-sm-4">Address</dt>
+              <dd className="col-sm-8">{member.address}</dd>
+            </dl>
+          </section>
+        </div>
+        <div className="col-md-6">
+          <section className="content-card">
+            <h4 className="mb-3">Membership Details</h4>
+            <dl className="row mb-0">
+              <dt className="col-sm-4">Plan</dt>
+              <dd className="col-sm-8"><span className="member-badge">{member.membershipPlan}</span></dd>
+              <dt className="col-sm-4">Status</dt>
+              <dd className="col-sm-8"><span className={`badge bg-${member.status === 'Active' ? 'success' : member.status === 'Expired' ? 'danger' : 'warning'}`}>{member.status}</span></dd>
+              <dt className="col-sm-4">Join Date</dt>
+              <dd className="col-sm-8">{member.joinDate}</dd>
+              <dt className="col-sm-4">Expiry Date</dt>
+              <dd className="col-sm-8">{member.expiryDate}</dd>
+            </dl>
+          </section>
+        </div>
+      </div>
     </div>
   );
 };

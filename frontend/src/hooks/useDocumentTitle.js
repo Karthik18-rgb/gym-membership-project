@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 
 const useDocumentTitle = (title) => {
   useEffect(() => {
+    const prev = document.title;
     document.title = title ? `${title} | GymOS` : 'GymOS';
+    return () => { document.title = prev; };
   }, [title]);
 };
 

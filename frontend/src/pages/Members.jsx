@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { deleteMember, getAllMembers } from '../services/MemberService';
 import Loader from '../components/Loader';
 import DeleteModal from '../components/DeleteModal';
-import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const PAGE_SIZE = 8;
 
@@ -19,7 +18,6 @@ const Members = () => {
   const [selected, setSelected] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
-  useDocumentTitle('Members');
 
   const load = async () => {
     setLoading(true);
@@ -34,14 +32,15 @@ const Members = () => {
     }
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   const filtered = useMemo(() => members.filter((m) => {
     const haystack = `${m.name} ${m.email} ${m.phoneNumber} ${m.membershipPlan}`.toLowerCase();
     return haystack.includes(query.toLowerCase()) && (!plan || m.membershipPlan === plan);
-  }).sort((a, b) => sort === 'name' ? a.name.localeCompare(b.name) : (a[sort] || '').localeCompare(b[sort] || '')), [members, query, plan, sort]);
+  }).sort((a, b) => {
+    if (sort === 'name') return a.name.localeCompare(b.name);
+    return (a[sort] || '').localeCompare(b[sort] || '');
+  }), [members, query, plan, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const rows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -68,7 +67,7 @@ const Members = () => {
         <div>
           <p className="eyebrow">MEMBER DIRECTORY</p>
           <h1>Members</h1>
-          <p>Search, sort, and manage every member record with a polished operations view.</p>
+          <p>Search, sort, and manage every member record.</p>
         </div>
         <Link className="btn btn-primary" to="/members/add"><i className="bi bi-person-plus-fill me-2" />Add Member</Link>
       </div>
@@ -102,6 +101,7 @@ const Members = () => {
                     <th>Member</th>
                     <th>Contact</th>
                     <th>Plan</th>
+                    <th>Status</th>
                     <th>Joined</th>
                     <th>Expiry</th>
                     <th className="text-end">Actions</th>
@@ -119,6 +119,7 @@ const Members = () => {
                         <small>{member.phoneNumber}</small>
                       </td>
                       <td><span className="member-badge">{member.membershipPlan}</span></td>
+                      <td><span className={`badge bg-${member.status === 'Active' ? 'success' : member.status === 'Expired' ? 'danger' : 'warning'}`}>{member.status}</span></td>
                       <td>{member.joinDate}</td>
                       <td>{member.expiryDate}</td>
                       <td className="text-end">
@@ -128,7 +129,7 @@ const Members = () => {
                       </td>
                     </tr>
                   ))}
-                  {!rows.length && <tr><td colSpan="6" className="text-center text-muted py-4">No members match this search.</td></tr>}
+                  {!rows.length && <tr><td colSpan="7" className="text-center text-muted py-4">No members match this search.</td></tr>}
                 </tbody>
               </table>
             </div>

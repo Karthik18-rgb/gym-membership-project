@@ -1,17 +1,11 @@
 package com.gym.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "members")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Member {
 
     @Id
@@ -38,6 +32,9 @@ public class Member {
 
     @Column(nullable = false)
     private LocalDate expiryDate;
+
+    @Column(nullable = false)
+    private String status;
 
     public Long getId() {
         return id;
@@ -101,5 +98,13 @@ public class Member {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import MemberForm from '../components/MemberForm';
 import { addMember } from '../services/MemberService';
-import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const AddMember = () => {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
-  useDocumentTitle('Add Member');
 
   const handleSave = async (member) => {
     setSaving(true);

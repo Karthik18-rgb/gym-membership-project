@@ -1,17 +1,16 @@
-import { motion } from 'framer-motion';
-import { FiTrendingUp } from 'react-icons/fi';
-
 const StatCard = ({ label, value, note, icon: Icon, accent }) => (
-  <motion.div whileHover={{ y: -4, scale: 1.01 }} className={`stat-card ${accent}`}>
-    <div>
-      <p>{label}</p>
-      <h2>{value}</h2>
-      <small>{note}</small>
+  <div className={`stat-card stat-card--${accent}`}>
+    <div className="stat-card__body">
+      <div>
+        <p className="stat-card__label">{label}</p>
+        <p className="stat-card__value">{value}</p>
+        <small className="stat-card__note">{note}</small>
+      </div>
+      <div className="stat-card__icon">
+        <Icon />
+      </div>
     </div>
-    <div className="stat-card__icon">
-      {Icon ? <Icon /> : <FiTrendingUp />}
-    </div>
-  </motion.div>
+  </div>
 );
 
 export default StatCard;

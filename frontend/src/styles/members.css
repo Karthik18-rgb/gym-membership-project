@@ -1,17 +1,1 @@
-.member-toolbar { display: grid; grid-template-columns: minmax(220px, 1.3fr) 180px 180px auto; gap: .75rem; margin-bottom: 1.25rem; }
-.search-box .input-group-text { background: white; border-right: 0; color: #64748b; }
-.search-box .form-control { border-left: 0; }
-.members-table th { color: #64748b; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
-.members-table td { font-size: .92rem; }
-.members-table small { color: #64748b; }
-.form-card { max-width: 920px; }
-.profile-header { display: flex; align-items: center; gap: 1rem; }
-.profile-header h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 .35rem; }
-.profile-avatar { display: grid; place-items: center; flex: 0 0 4rem; height: 4rem; border-radius: 50%; background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1d4ed8; font-size: 1.55rem; font-weight: 700; }
-.detail-item { display: flex; gap: 1rem; align-items: flex-start; padding: .95rem; border-radius: .8rem; background: linear-gradient(135deg, #f8fbff, #f8fafc); border: 1px solid var(--border); }
-.detail-item > i { color: var(--primary); font-size: 1.1rem; }
-.detail-item small { color: #64748b; display: block; margin-bottom: .2rem; }
-.detail-item p { margin: 0; font-weight: 600; }
-.member-badge { padding: .35rem .7rem; border-radius: 999px; background: rgba(37,99,235,0.1); color: #1d4ed8; font-weight: 600; }
-@media (max-width: 767.98px) { .member-toolbar { grid-template-columns: 1fr 1fr; } .search-box { grid-column: 1 / -1; } .profile-header { flex-wrap: wrap; } .profile-header .btn { margin-left: 0 !important; } }
-@media (max-width: 450px) { .member-toolbar { grid-template-columns: 1fr; } }
+/* Members page extras */

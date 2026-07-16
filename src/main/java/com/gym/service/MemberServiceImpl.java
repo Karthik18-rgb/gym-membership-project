@@ -49,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
         existingMember.setMembershipPlan(member.getMembershipPlan());
         existingMember.setJoinDate(member.getJoinDate());
         existingMember.setExpiryDate(member.getExpiryDate());
+        existingMember.setStatus(member.getStatus());
 
         return memberRepository.save(existingMember);
     }

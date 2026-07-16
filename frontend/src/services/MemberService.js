@@ -1,19 +1,25 @@
 import axios from 'axios';
 
+const API_URL = 'http://localhost:8000/api/members';
+
 const memberApi = axios.create({
-  baseURL: 'http://localhost:8000/api/members',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+memberApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem('gym-token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 const getErrorMessage = (error) => {
   const responseData = error.response?.data;
-
   if (typeof responseData === 'string') return responseData;
   if (responseData?.message) return responseData.message;
-  if (error.request) return 'Unable to reach the server. Please make sure the backend is running.';
-
+  if (error.request) return 'Unable to reach the server.';
   return 'Something went wrong. Please try again.';
 };
 
@@ -60,5 +66,3 @@ export const deleteMember = async (id) => {
     throw new Error(getErrorMessage(error));
   }
 };
-
-export default memberApi;
